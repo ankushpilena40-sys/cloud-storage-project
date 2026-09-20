@@ -1,0 +1,710 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+/* =========================================================
+   CLOUD STORAGE — PREMIUM UI
+   UI ONLY — NO FUNCTIONALITY CHANGES
+   ========================================================= */
+
+body:has(aside) {
+  background: #f5f7fb;
+}
+
+/* Smooth everything */
+body:has(aside) * {
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease,
+    color 180ms ease;
+}
+
+/* =========================================================
+   SIDEBAR
+   ========================================================= */
+
+body:has(aside) aside {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.98),
+      rgba(248, 250, 252, 0.98)
+    ) !important;
+
+  border-right: 1px solid #e7ebf2 !important;
+
+  box-shadow:
+    8px 0 30px rgba(15, 23, 42, 0.035);
+}
+
+/* Logo area */
+body:has(aside) aside > div:first-child {
+  border-bottom: 1px solid #eef1f5 !important;
+}
+
+/* Cloud logo */
+body:has(aside) aside .bg-sky-500 {
+  background: linear-gradient(
+    135deg,
+    #0ea5e9,
+    #2563eb
+  ) !important;
+
+  box-shadow:
+    0 8px 20px rgba(37, 99, 235, 0.22);
+}
+
+/* New button */
+body:has(aside) aside button {
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    background 180ms ease;
+}
+
+body:has(aside) aside button:hover {
+  transform: translateY(-1px);
+}
+
+/* Upload button */
+body:has(aside) aside .bg-sky-600 {
+  background: linear-gradient(
+    135deg,
+    #0284c7,
+    #2563eb
+  ) !important;
+
+  box-shadow:
+    0 8px 18px rgba(37, 99, 235, 0.20);
+}
+
+body:has(aside) aside .bg-sky-600:hover {
+  background: linear-gradient(
+    135deg,
+    #0369a1,
+    #1d4ed8
+  ) !important;
+
+  box-shadow:
+    0 10px 24px rgba(37, 99, 235, 0.28);
+}
+
+/* =========================================================
+   SIDEBAR NAV
+   ========================================================= */
+
+body:has(aside) aside a,
+body:has(aside) aside button {
+  border-radius: 14px;
+}
+
+body:has(aside) aside .bg-sky-50 {
+  background:
+    linear-gradient(
+      135deg,
+      #eff8ff,
+      #eaf4ff
+    ) !important;
+
+  box-shadow:
+    inset 0 0 0 1px rgba(14, 165, 233, 0.08);
+}
+
+/* =========================================================
+   TOP SEARCH BAR
+   ========================================================= */
+
+body:has(aside) input[placeholder*="Search"] {
+  background: rgba(255, 255, 255, 0.9) !important;
+
+  border: 1px solid #e2e8f0 !important;
+
+  box-shadow:
+    0 4px 18px rgba(15, 23, 42, 0.035);
+}
+
+body:has(aside) input[placeholder*="Search"]:focus {
+  border-color: #93c5fd !important;
+
+  box-shadow:
+    0 0 0 4px rgba(59, 130, 246, 0.08),
+    0 8px 24px rgba(15, 23, 42, 0.05);
+}
+
+/* =========================================================
+   MAIN CONTENT
+   ========================================================= */
+
+body:has(aside) main {
+  background: #f7f9fc;
+}
+
+/* Main headings */
+body:has(aside) h1 {
+  letter-spacing: -0.04em;
+}
+
+/* =========================================================
+   FOLDER CARDS
+   ========================================================= */
+
+body:has(aside) .grid > div {
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease;
+}
+
+/* Folder cards */
+body:has(aside) .grid > div:hover {
+  transform: translateY(-2px);
+
+  border-color: #dbeafe !important;
+
+  box-shadow:
+    0 12px 30px rgba(15, 23, 42, 0.08);
+}
+
+/* Folder icon */
+body:has(aside) .grid > div .bg-sky-50 {
+  background:
+    linear-gradient(
+      135deg,
+      #eff6ff,
+      #e0f2fe
+    ) !important;
+}
+
+/* =========================================================
+   FILE TABLE
+   ========================================================= */
+
+body:has(aside) table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+body:has(aside) table thead {
+  background: #f8fafc !important;
+}
+
+body:has(aside) table tbody tr {
+  background: rgba(255, 255, 255, 0.9);
+
+  transition:
+    background 160ms ease,
+    transform 160ms ease;
+}
+
+body:has(aside) table tbody tr:hover {
+  background: #f8fbff !important;
+
+  box-shadow:
+    inset 3px 0 0 #3b82f6;
+}
+
+/* Table header */
+body:has(aside) table th {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em;
+  color: #94a3b8 !important;
+}
+
+/* File names */
+body:has(aside) table td:first-child {
+  font-weight: 600;
+}
+
+/* =========================================================
+   FILE ICONS
+   ========================================================= */
+
+body:has(aside) table td .rounded-xl {
+  box-shadow:
+    0 4px 12px rgba(15, 23, 42, 0.04);
+}
+
+/* =========================================================
+   STAR
+   ========================================================= */
+
+body:has(aside) .text-amber-500 {
+  filter:
+    drop-shadow(0 2px 4px rgba(245, 158, 11, 0.18));
+}
+
+/* =========================================================
+   STORAGE CARD
+   ========================================================= */
+
+body:has(aside) aside .bg-slate-50 {
+  background:
+    linear-gradient(
+      145deg,
+      #f8fafc,
+      #eef5fb
+    ) !important;
+
+  border: 1px solid #e8edf3;
+}
+
+/* Storage progress */
+body:has(aside) aside .bg-sky-500 {
+  box-shadow:
+    0 0 8px rgba(14, 165, 233, 0.35);
+}
+
+/* =========================================================
+   PROFILE AREA
+   ========================================================= */
+
+body:has(aside) aside img,
+body:has(aside) aside .rounded-full {
+  box-shadow:
+    0 4px 12px rgba(15, 23, 42, 0.08);
+}
+
+/* =========================================================
+   THREE DOT MENU
+   ========================================================= */
+
+body:has(aside) .absolute {
+  border-radius: 14px;
+
+  box-shadow:
+    0 18px 45px rgba(15, 23, 42, 0.14);
+
+  border: 1px solid #e7edf4;
+}
+
+/* Menu buttons */
+body:has(aside) .absolute button:hover {
+  background: #f1f5f9;
+}
+
+/* =========================================================
+   PREMIUM SCROLLBAR
+   ========================================================= */
+
+body:has(aside) ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+body:has(aside) ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+body:has(aside) ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 999px;
+}
+
+body:has(aside) ::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* =========================================================
+   PREMIUM MICRO ANIMATION
+   ========================================================= */
+
+@keyframes premiumFade {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+body:has(aside) main {
+  animation: premiumFade 350ms ease-out;
+}
+/* Premium Font */
+
+body {
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+  letter-spacing: -0.01em;
+}
+
+h1,
+h2,
+h3 {
+  font-family: Inter, system-ui, sans-serif;
+  letter-spacing: -0.035em;
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: Inter, system-ui, sans-serif;
+}
+
+.text-xs {
+  letter-spacing: 0.01em;
+}
+/* =========================================================
+   GLASS • NEON • CRYSTAL UI
+   UI ONLY
+   ========================================================= */
+
+/* =========================================================
+   CRYSTAL NEON BLUE UI
+   ========================================================= */
+
+:root {
+  --crystal-bg: #e8f7ff;
+  --crystal-blue: #cfefff;
+  --neon-cyan: #00d9ff;
+  --electric-blue: #1683ff;
+  --electric-violet: #635bff;
+}
+
+/* MAIN BACKGROUND */
+body:has(aside) {
+  background:
+    radial-gradient(
+      circle at 8% 8%,
+      rgba(0, 217, 255, 0.32),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 92% 12%,
+      rgba(99, 91, 255, 0.20),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 55% 100%,
+      rgba(22, 131, 255, 0.16),
+      transparent 35%
+    ),
+    linear-gradient(
+      135deg,
+      #e8f7ff 0%,
+      #dff3ff 42%,
+      #e8edff 100%
+    ) !important;
+}
+
+/* =========================================================
+   SIDEBAR — CRYSTAL GLASS
+   ========================================================= */
+
+body:has(aside) aside {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.70),
+      rgba(235, 249, 255, 0.48)
+    ) !important;
+
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+
+  border-right: 1px solid rgba(255, 255, 255, 0.80) !important;
+
+  box-shadow:
+    8px 0 40px rgba(22, 131, 255, 0.10),
+    inset -1px 0 rgba(255, 255, 255, 0.85);
+}
+
+/* =========================================================
+   TOP SEARCH AREA
+   ========================================================= */
+
+body:has(aside) input[placeholder*="Search"] {
+  background:
+    rgba(255, 255, 255, 0.48) !important;
+
+  backdrop-filter: blur(22px) saturate(180%);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+
+  border: 1px solid rgba(255, 255, 255, 0.90) !important;
+
+  box-shadow:
+    0 10px 35px rgba(22, 131, 255, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+body:has(aside) input[placeholder*="Search"]:focus {
+  border-color: rgba(0, 217, 255, 0.70) !important;
+
+  box-shadow:
+    0 0 0 4px rgba(0, 217, 255, 0.12),
+    0 12px 35px rgba(0, 217, 255, 0.16),
+    inset 0 1px 0 white;
+}
+
+/* =========================================================
+   CLOUD LOGO — NEON
+   ========================================================= */
+
+body:has(aside) aside .bg-sky-500 {
+  background:
+    linear-gradient(
+      135deg,
+      #00d9ff,
+      #1683ff 55%,
+      #635bff
+    ) !important;
+
+  box-shadow:
+    0 8px 25px rgba(0, 217, 255, 0.35),
+    0 0 30px rgba(22, 131, 255, 0.22);
+}
+
+/* =========================================================
+   UPLOAD BUTTON — ELECTRIC BLUE
+   ========================================================= */
+
+body:has(aside) aside .bg-sky-600 {
+  background:
+    linear-gradient(
+      135deg,
+      #00cfff,
+      #1683ff 55%,
+      #635bff
+    ) !important;
+
+  border: 1px solid rgba(255, 255, 255, 0.40);
+
+  box-shadow:
+    0 8px 25px rgba(22, 131, 255, 0.28),
+    0 0 28px rgba(0, 217, 255, 0.16);
+}
+
+body:has(aside) aside .bg-sky-600:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 12px 35px rgba(22, 131, 255, 0.38),
+    0 0 40px rgba(0, 217, 255, 0.22);
+}
+
+/* =========================================================
+   ACTIVE MY DRIVE
+   ========================================================= */
+
+body:has(aside) aside .bg-sky-50 {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(207, 239, 255, 0.78),
+      rgba(221, 226, 255, 0.72)
+    ) !important;
+
+  border: 1px solid rgba(0, 217, 255, 0.22);
+
+  box-shadow:
+    0 6px 22px rgba(0, 217, 255, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+/* =========================================================
+   FOLDER CARDS — CRYSTAL
+   ========================================================= */
+
+body:has(aside) .grid > div {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.70),
+      rgba(235, 249, 255, 0.48)
+    ) !important;
+
+  backdrop-filter: blur(20px) saturate(170%);
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+
+  border: 1px solid rgba(255, 255, 255, 0.88) !important;
+
+  box-shadow:
+    0 10px 30px rgba(22, 131, 255, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+
+  transition:
+    transform 220ms ease,
+    box-shadow 220ms ease,
+    border-color 220ms ease;
+}
+
+body:has(aside) .grid > div:hover {
+  transform: translateY(-4px);
+
+  border-color: rgba(0, 217, 255, 0.48) !important;
+
+  box-shadow:
+    0 18px 45px rgba(22, 131, 255, 0.14),
+    0 0 28px rgba(0, 217, 255, 0.08),
+    inset 0 1px 0 white;
+}
+
+/* =========================================================
+   FILE AREA
+   ========================================================= */
+
+body:has(aside) table {
+  background:
+    rgba(255, 255, 255, 0.52) !important;
+
+  backdrop-filter: blur(22px) saturate(170%);
+  -webkit-backdrop-filter: blur(22px) saturate(170%);
+
+  border: 1px solid rgba(255, 255, 255, 0.82);
+
+  box-shadow:
+    0 14px 40px rgba(22, 131, 255, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+body:has(aside) table thead {
+  background:
+    rgba(220, 242, 255, 0.45) !important;
+}
+
+body:has(aside) table tbody tr {
+  background:
+    rgba(255, 255, 255, 0.28) !important;
+}
+
+body:has(aside) table tbody tr:hover {
+  background:
+    rgba(235, 249, 255, 0.70) !important;
+
+  box-shadow:
+    inset 3px 0 0 var(--neon-cyan),
+    0 4px 20px rgba(0, 217, 255, 0.07);
+}
+
+/* =========================================================
+   STORAGE CARD
+   ========================================================= */
+
+body:has(aside) aside .bg-slate-50 {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.62),
+      rgba(220, 242, 255, 0.45)
+    ) !important;
+
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  border: 1px solid rgba(255, 255, 255, 0.82) !important;
+
+  box-shadow:
+    0 10px 28px rgba(22, 131, 255, 0.08),
+    inset 0 1px white;
+}
+
+/* =========================================================
+   ALL GLASS BUTTONS
+   ========================================================= */
+
+body:has(aside) aside button {
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease;
+}
+
+body:has(aside) aside button:hover {
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   THREE DOT MENU
+   ========================================================= */
+
+body:has(aside) .absolute {
+  background:
+    rgba(255, 255, 255, 0.78) !important;
+
+  backdrop-filter: blur(25px) saturate(180%);
+  -webkit-backdrop-filter: blur(25px) saturate(180%);
+
+  border: 1px solid rgba(255, 255, 255, 0.90) !important;
+
+  box-shadow:
+    0 20px 55px rgba(22, 131, 255, 0.14),
+    0 0 25px rgba(0, 217, 255, 0.06);
+}
+
+/* =========================================================
+   SCROLLBAR
+   ========================================================= */
+
+body:has(aside) ::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+body:has(aside) ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+body:has(aside) ::-webkit-scrollbar-thumb {
+  background:
+    linear-gradient(
+      180deg,
+      #67e8f9,
+      #3b82f6
+    );
+
+  border-radius: 999px;
+}
+
+/* =========================================================
+   CRYSTAL SHINE
+   ========================================================= */
+
+body:has(aside) aside::after {
+  content: "";
+  position: absolute;
+
+  top: 0;
+  right: 0;
+
+  width: 1px;
+  height: 100%;
+
+  background:
+    linear-gradient(
+      180deg,
+      transparent,
+      rgba(255, 255, 255, 0.95),
+      rgba(0, 217, 255, 0.35),
+      transparent
+    );
+
+  pointer-events: none;
+}
