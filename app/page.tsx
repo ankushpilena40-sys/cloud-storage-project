@@ -197,7 +197,7 @@ export default function Home() {
 
   const [loadingShares, setLoadingShares] =
     useState(false);
-
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   // ==========================================
   // PUBLIC LINK
   // ==========================================
@@ -2572,14 +2572,36 @@ export default function Home() {
   // ==========================================
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
-      <div className="flex min-h-screen">
+    <div className="flex min-h-screen">
+
+    <button
+      type="button"
+      onClick={() => setMobileMenuOpen(true)}
+      className="fixed left-4 top-4 z-50 flex h-11 w-11 items-center justify-center rounded-xl bg-white/90 text-slate-700 shadow-lg backdrop-blur lg:hidden"
+      aria-label="Open menu"
+    >
+      ☰
+    </button>
+
+    
+    
 
         {/* ==========================================
             SIDEBAR
         ========================================== */}
-        <aside className="hidden w-64 shrink-0 border-r border-slate-200 bg-white lg:flex lg:flex-col">
-
+        <aside
+  className={`fixed inset-y-0 left-0 z-50 w-64 shrink-0 flex-col border-r border-slate-200 bg-white ${
+    mobileMenuOpen ? "flex" : "hidden"
+  } lg:static lg:flex`}
+>
+  <button
+  type="button"
+  onClick={() => setMobileMenuOpen(false)}
+  className="absolute right-4 top-4 z-50 flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 lg:hidden"
+  aria-label="Close menu"
+>
+  ✕
+</button>
           {/* Logo */}
           <div className="border-b border-slate-100 px-6 py-6">
             <div className="flex items-center gap-3">
@@ -2629,7 +2651,10 @@ export default function Home() {
           <nav className="mt-6 px-3">
 
             <button
-              onClick={goToMyDrive}
+              onClick={() => {
+  goToMyDrive();
+  setMobileMenuOpen(false);
+}}
               className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-semibold ${
                 viewMode === "drive"
                   ? "bg-sky-50 text-sky-700"
@@ -2641,7 +2666,10 @@ export default function Home() {
             </button>
 
             <button
-              onClick={openShared}
+              onClick={() => {
+  openShared();
+  setMobileMenuOpen(false);
+}}
               className={`mt-1 flex w-full items-center justify-between rounded-xl px-4 py-3 text-left text-sm font-semibold ${
                 viewMode === "shared"
                   ? "bg-sky-50 text-sky-700"
@@ -2661,7 +2689,10 @@ export default function Home() {
             </button>
 
             <button
-              onClick={openStarred}
+              onClick={() => {
+  openStarred();
+  setMobileMenuOpen(false);
+}}
               className={`mt-1 flex w-full items-center justify-between rounded-xl px-4 py-3 text-left text-sm font-semibold ${
                 viewMode === "starred"
                   ? "bg-sky-50 text-sky-700"
@@ -2681,7 +2712,10 @@ export default function Home() {
             </button>
 
             <button
-              onClick={openRecent}
+              onClick={() => {
+  openRecent();
+  setMobileMenuOpen(false);
+}}
               className={`mt-1 flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-semibold ${
                 viewMode === "recent"
                   ? "bg-sky-50 text-sky-700"
@@ -2693,7 +2727,10 @@ export default function Home() {
             </button>
 
             <button
-              onClick={openTrash}
+              onClick={() => {
+  openTrash();
+  setMobileMenuOpen(false);
+}}
               className={`mt-1 flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-semibold ${
                 viewMode === "trash"
                   ? "bg-red-50 text-red-700"
@@ -3399,7 +3436,7 @@ export default function Home() {
 
           </div>
         </main>
-      </div>
+      
 
       {/* ======================================
           SHARE MODAL
