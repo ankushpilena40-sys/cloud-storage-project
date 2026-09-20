@@ -1050,6 +1050,125 @@ export default function Home() {
   // ==========================================
   // CREATE FOLDER
   // ==========================================
+    // ==========================================
+// RENAME FOLDER
+// ==========================================
+async function renameFolder(folder: Folder) {
+  const newName = window.prompt(
+    "Enter new folder name:",
+    folder.name
+  );
+
+  if (newName === null) return;
+
+  const name = newName.trim();
+
+  if (!name) {
+    setMessage("Folder name cannot be empty.");
+    return;
+  }
+
+  if (name === folder.name) return;
+
+  const user = await getCurrentUser();
+
+  if (!user) return;
+
+  const { error } = await supabase
+    .from("folders")
+    .update({ name })
+    .eq("id", folder.id)
+    .eq("owner_id", user.id);
+
+  if (error) {
+    setMessage("Rename folder error: " + error.message);
+    return;
+  }
+
+  setFolders((current) =>
+    current.map((item) =>
+      item.id === folder.id
+        ? { ...item, name }
+        : item
+    )
+  );
+
+  setAllFolders((current) =>
+    current.map((item) =>
+      item.id === folder.id
+        ? { ...item, name }
+        : item
+    )
+  );
+
+  setMessage(`Folder renamed to "${name}".`);
+}
+
+
+// ==========================================
+// DELETE FOLDER
+// ==========================================
+async function deleteFolder(folder: Folder) {
+  const user = await getCurrentUser();
+
+  if (!user) return;
+
+  const { count: fileCount, error: fileError } = await supabase
+    .from("files")
+    .select("id", { count: "exact", head: true })
+    .eq("folder_id", folder.id)
+    .eq("owner_id", user.id);
+
+  if (fileError) {
+    setMessage("Could not check folder files.");
+    return;
+  }
+
+  const { count: childCount, error: childError } = await supabase
+    .from("folders")
+    .select("id", { count: "exact", head: true })
+    .eq("parent_id", folder.id)
+    .eq("owner_id", user.id);
+
+  if (childError) {
+    setMessage("Could not check subfolders.");
+    return;
+  }
+
+  if ((fileCount ?? 0) > 0 || (childCount ?? 0) > 0) {
+    setMessage(
+      `"${folder.name}" is not empty. Move its files and folders first.`
+    );
+    return;
+  }
+
+  const confirmed = window.confirm(
+    `Delete folder "${folder.name}"?`
+  );
+
+  if (!confirmed) return;
+
+  const { error } = await supabase
+    .from("folders")
+    .delete()
+    .eq("id", folder.id)
+    .eq("owner_id", user.id);
+
+  if (error) {
+    setMessage("Delete folder error: " + error.message);
+    return;
+  }
+
+  setFolders((current) =>
+    current.filter((item) => item.id !== folder.id)
+  );
+
+  setAllFolders((current) =>
+    current.filter((item) => item.id !== folder.id)
+  );
+
+  setMessage(`Folder "${folder.name}" deleted.`);
+}
      async function createFolder() {
     if (viewMode !== "drive") {
       return;
@@ -3038,39 +3157,70 @@ export default function Home() {
                 <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
 
                   {filteredFolders.map((folder) => (
-                    <div
-                      key={folder.id}
-                      className="group flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-sky-200 hover:shadow-md"
-                    >
+                  
+  <div
+    key={folder.id}
+    className="group flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-sky-200 hover:shadow-md"
+  >
+    {/* OPEN FOLDER */}
+    <button
+      type="button"
+      onClick={() => openFolder(folder)}
+      className="flex min-w-0 flex-1 items-center gap-3 text-left"
+    >
+      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-sky-50 text-2xl">
+        📁
+      </div>
 
-                      <button
-                        onClick={() => openFolder(folder)}
-                        className="flex min-w-0 flex-1 items-center gap-3 text-left"
-                      >
-                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-sky-50 text-2xl">
-                          📁
-                        </div>
+      <div className="min-w-0">
+        <p
+          className="truncate text-sm font-bold"
+          title={folder.name}
+        >
+          {folder.name}
+        </p>
 
-                        <div className="min-w-0">
-                          <p
-                            className="truncate text-sm font-bold"
-                            title={folder.name}
-                          >
-                            {folder.name}
-                          </p>
+        <p className="mt-0.5 text-xs text-slate-400">
+          Folder
+        </p>
+      </div>
+    </button>
 
-                          <p className="mt-0.5 text-xs text-slate-400">
-                            Folder
-                          </p>
-                        </div>
-                      </button>
+    {/* ⋮ MENU */}
+    <details className="relative shrink-0">
+      <summary
+        className="flex h-9 w-9 cursor-pointer list-none items-center justify-center rounded-lg text-xl font-bold text-slate-400 hover:bg-slate-100 hover:text-slate-700"
+        title="Folder options"
+      >
+        ⋮
+      </summary>
 
-                      <span className="text-slate-300">
-                        ›
-                      </span>
+      <div className="absolute right-0 top-10 z-50 w-40 overflow-hidden rounded-xl border border-slate-200 bg-white p-1 shadow-xl">
+        
+        <button
+          type="button"
+          onClick={() => renameFolder(folder)}
+          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-700 hover:bg-sky-50 hover:text-sky-700"
+        >
+          ✏️
+          <span>Rename</span>
+        </button>
 
-                    </div>
-                  ))}
+        <button
+          type="button"
+          onClick={() => deleteFolder(folder)}
+          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-red-600 hover:bg-red-50"
+        >
+          🗑️
+          <span>Delete</span>
+        </button>
+
+      </div>
+    </details>
+  </div>
+))}
+                   
+      
 
                 </div>
               </section>
