@@ -1117,7 +1117,8 @@ async function deleteFolder(folder: Folder) {
     .from("files")
     .select("id", { count: "exact", head: true })
     .eq("folder_id", folder.id)
-    .eq("owner_id", user.id);
+    .eq("owner_id", user.id)
+    .eq("is_deleted", false);
 
   if (fileError) {
     setMessage("Could not check folder files.");
