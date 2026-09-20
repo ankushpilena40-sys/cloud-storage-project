@@ -708,3 +708,12 @@ body:has(aside) aside::after {
 
   pointer-events: none;
 }
+/* Mobile sidebar drawer fix */
+@media (max-width: 1023px) {
+  body:has(aside) aside {
+    background: rgba(255, 255, 255, 0.98) !important;
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    box-shadow: 12px 0 40px rgba(15, 23, 42, 0.18) !important;
+  }
+}
