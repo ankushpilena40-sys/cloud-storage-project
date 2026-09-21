@@ -55,8 +55,7 @@ export default function PublicSharePage({
     async function loadToken() {
       const resolved = await params;
 
-      const publicToken =
-        resolved.token;
+      const publicToken = resolved.token;
 
       setToken(publicToken);
 
@@ -84,26 +83,23 @@ export default function PublicSharePage({
     }
 
     try {
+      const hasPassword =
+        enteredPassword.trim().length > 0;
+
       const response = await fetch(
         `/api/public-share/${encodeURIComponent(
           publicToken
         )}`,
         {
-          method:
-            enteredPassword.trim()
-              ? "POST"
-              : "GET",
+          method: hasPassword ? "POST" : "GET",
           headers: {
-            "Content-Type":
-              "application/json",
+            "Content-Type": "application/json",
           },
-          body:
-            enteredPassword.trim()
-              ? JSON.stringify({
-                  password:
-                    enteredPassword,
-                })
-              : undefined,
+          body: hasPassword
+            ? JSON.stringify({
+                password: enteredPassword,
+              })
+            : undefined,
         }
       );
 
@@ -165,9 +161,7 @@ export default function PublicSharePage({
 
       setLinkData(result.link);
       setFile(result.file);
-      setSignedUrl(
-        result.signedUrl
-      );
+      setSignedUrl(result.signedUrl);
       setPasswordRequired(false);
       setError("");
     } catch (requestError) {
@@ -199,28 +193,127 @@ export default function PublicSharePage({
     );
   }
 
-  function downloadFile() {
-    if (!signedUrl || !file) {
+  async function downloadFile() {
+    if (!token || !file) {
       return;
     }
 
     setDownloading(true);
+    setError("");
 
-    const link =
-      document.createElement("a");
+    try {
+      const downloadUrl =
+        `/api/public-share/${encodeURIComponent(
+          token
+        )}?download=1`;
 
-    link.href = signedUrl;
-    link.download = file.name;
-    link.target = "_blank";
-    link.rel = "noopener noreferrer";
+      const hasPassword =
+        password.trim().length > 0;
 
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
+      const response = await fetch(
+        downloadUrl,
+        {
+          method: hasPassword
+            ? "POST"
+            : "GET",
+          headers: hasPassword
+            ? {
+                "Content-Type":
+                  "application/json",
+              }
+            : undefined,
+          body: hasPassword
+            ? JSON.stringify({
+                password: password,
+              })
+            : undefined,
+        }
+      );
 
-    setTimeout(() => {
+      if (!response.ok) {
+        let message =
+          "Download failed.";
+
+        try {
+          const result =
+            await response.json();
+
+          if (
+            result?.error ===
+            "PASSWORD_REQUIRED"
+          ) {
+            message =
+              "This file requires a password.";
+          } else if (
+            result?.error ===
+            "INVALID_PASSWORD"
+          ) {
+            message =
+              "Incorrect password.";
+          } else if (
+            result?.error ===
+            "LINK_EXPIRED"
+          ) {
+            message =
+              "This share link has expired.";
+          } else if (
+            result?.error ===
+            "LINK_NOT_FOUND"
+          ) {
+            message =
+              "This share link does not exist.";
+          } else if (
+            result?.error ===
+            "FILE_NOT_FOUND"
+          ) {
+            message =
+              "The shared file could not be found.";
+          } else if (
+            result?.message
+          ) {
+            message =
+              result.message;
+          }
+        } catch {
+          // Ignore JSON parsing error.
+        }
+
+        throw new Error(message);
+      }
+
+      const blob =
+        await response.blob();
+
+      const blobUrl =
+        URL.createObjectURL(blob);
+
+      const link =
+        document.createElement("a");
+
+      link.href = blobUrl;
+      link.download = file.name;
+
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      URL.revokeObjectURL(blobUrl);
+
       setDownloading(false);
-    }, 1000);
+    } catch (downloadError) {
+      console.error(
+        "Public download error:",
+        downloadError
+      );
+
+      setError(
+        downloadError instanceof Error
+          ? downloadError.message
+          : "Unable to download file."
+      );
+
+      setDownloading(false);
+    }
   }
 
   function formatFileSize(
@@ -288,7 +381,6 @@ export default function PublicSharePage({
     return (
       <main className="flex min-h-screen items-center justify-center bg-gray-50 p-6">
         <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow">
-
           <div className="text-center">
             <div className="text-5xl">
               🔒
@@ -352,7 +444,6 @@ export default function PublicSharePage({
     return (
       <main className="flex min-h-screen items-center justify-center bg-gray-50 p-6">
         <div className="w-full max-w-md rounded-2xl bg-white p-8 text-center shadow">
-
           <div className="text-5xl">
             ⚠️
           </div>
@@ -381,7 +472,6 @@ export default function PublicSharePage({
   return (
     <main className="flex min-h-screen items-center justify-center bg-gray-50 p-6">
       <div className="w-full max-w-lg rounded-2xl bg-white p-8 shadow">
-
         <div className="text-center">
           <div className="text-6xl">
             📄
@@ -428,7 +518,7 @@ export default function PublicSharePage({
           className="mt-6 w-full rounded-lg bg-black px-4 py-3 font-medium text-white hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {downloading
-            ? "Opening..."
+            ? "Downloading..."
             : "⬇️ Download File"}
         </button>
 

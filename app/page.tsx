@@ -1406,8 +1406,11 @@ async function deleteFolder(folder: Folder) {
     setMessage(`Preparing "${file.name}" for download...`);
 
     const { data, error } = await supabase.storage
-      .from("drive")
-      .createSignedUrl(file.storage_key, 60);
+  .from("drive")
+  .createSignedUrl(file.storage_key, 60, {
+    download: file.name,
+  });
+
 
     if (error || !data?.signedUrl) {
       console.error("Download error:", error);

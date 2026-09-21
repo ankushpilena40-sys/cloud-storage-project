@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "../../../../lib/supabase/server";
+
 type RouteContext = {
   params: Promise<{
     token: string;
@@ -46,7 +47,8 @@ async function getPublicFile(
     return {
       success: false as const,
       errorCode: getErrorCode(error.message || ""),
-      errorMessage: error.message || "Unable to resolve link.",
+      errorMessage:
+        error.message || "Unable to resolve link.",
     };
   }
 
@@ -64,18 +66,20 @@ async function getPublicFile(
     return {
       success: false as const,
       errorCode: "UNSUPPORTED_RESOURCE",
-      errorMessage: "This public link is not a file link.",
+      errorMessage:
+        "This public link is not a file link.",
     };
   }
 
-  const { data: file, error: fileError } = await supabase
-    .from("files")
-    .select(
-      "id, name, storage_key, mime_type, size_bytes"
-    )
-    .eq("id", link.resource_id)
-    .eq("is_deleted", false)
-    .single();
+  const { data: file, error: fileError } =
+    await supabase
+      .from("files")
+      .select(
+        "id, name, storage_key, mime_type, size_bytes"
+      )
+      .eq("id", link.resource_id)
+      .eq("is_deleted", false)
+      .single();
 
   if (fileError || !file) {
     console.error(
@@ -86,16 +90,23 @@ async function getPublicFile(
     return {
       success: false as const,
       errorCode: "FILE_NOT_FOUND",
-      errorMessage: "The shared file could not be found.",
+      errorMessage:
+        "The shared file could not be found.",
     };
   }
 
   const { data: signedData, error: signedError } =
     await supabase.storage
       .from("drive")
-      .createSignedUrl(file.storage_key, 60);
+      .createSignedUrl(
+        file.storage_key,
+        60
+      );
 
-  if (signedError || !signedData?.signedUrl) {
+  if (
+    signedError ||
+    !signedData?.signedUrl
+  ) {
     console.error(
       "Create signed URL error:",
       signedError
@@ -104,12 +115,14 @@ async function getPublicFile(
     return {
       success: false as const,
       errorCode: "DOWNLOAD_URL_FAILED",
-      errorMessage: "Could not create download URL.",
+      errorMessage:
+        "Could not create download URL.",
     };
   }
 
   return {
     success: true as const,
+
     link: {
       id: link.link_id,
       resourceType: link.resource_type,
@@ -117,23 +130,74 @@ async function getPublicFile(
       role: link.role,
       expiresAt: link.expires_at,
     },
+
     file: {
       id: file.id,
       name: file.name,
       mimeType: file.mime_type,
       sizeBytes: file.size_bytes,
     },
+
     signedUrl: signedData.signedUrl,
   };
 }
 
 /*
-  GET
-  Example:
+  Converts the Supabase signed URL into a real
+  browser download response.
+*/
+async function downloadPublicFile(
+  signedUrl: string,
+  fileName: string,
+  mimeType: string | null
+) {
+  const response = await fetch(signedUrl);
 
+  if (!response.ok) {
+    throw new Error(
+      `File download failed (${response.status})`
+    );
+  }
+
+  const fileBuffer = await response.arrayBuffer();
+
+  const safeFileName = fileName
+    .replace(/[\r\n"]/g, "_");
+
+  const encodedFileName =
+    encodeURIComponent(safeFileName);
+
+  return new Response(fileBuffer, {
+    status: 200,
+
+    headers: {
+      "Content-Type":
+        mimeType ||
+        "application/octet-stream",
+
+      "Content-Disposition":
+        `attachment; filename="${safeFileName}"; filename*=UTF-8''${encodedFileName}`,
+
+      "Content-Length":
+        String(fileBuffer.byteLength),
+
+      "Cache-Control":
+        "private, no-store, max-age=0",
+
+      "X-Content-Type-Options":
+        "nosniff",
+    },
+  });
+}
+
+/*
+  GET
+
+  Normal:
   /api/public-share/abc123
 
-  Used for public links without a password.
+  Download:
+  /api/public-share/abc123?download=1
 */
 export async function GET(
   request: NextRequest,
@@ -163,7 +227,8 @@ export async function GET(
           return NextResponse.json(
             {
               error: "LINK_NOT_FOUND",
-              message: "This share link does not exist.",
+              message:
+                "This share link does not exist.",
             },
             { status: 404 }
           );
@@ -172,7 +237,8 @@ export async function GET(
           return NextResponse.json(
             {
               error: "LINK_EXPIRED",
-              message: "This share link has expired.",
+              message:
+                "This share link has expired.",
             },
             { status: 410 }
           );
@@ -221,6 +287,41 @@ export async function GET(
       }
     }
 
+    /*
+      If ?download=1 is present,
+      return the actual file as an attachment.
+    */
+    if (
+      request.nextUrl.searchParams.get(
+        "download"
+      ) === "1"
+    ) {
+      try {
+        return await downloadPublicFile(
+          result.signedUrl,
+          result.file.name,
+          result.file.mimeType
+        );
+      } catch (error) {
+        console.error(
+          "Public file download error:",
+          error
+        );
+
+        return NextResponse.json(
+          {
+            error: "DOWNLOAD_FAILED",
+            message:
+              "Could not download the file.",
+          },
+          { status: 500 }
+        );
+      }
+    }
+
+    /*
+      Normal share-page response.
+    */
     return NextResponse.json({
       success: true,
       link: result.link,
@@ -246,10 +347,16 @@ export async function GET(
 
 /*
   POST
-  Used when the public link requires a password.
+
+  Used for password-protected public links.
+
+  Normal:
+  POST /api/public-share/abc123
+
+  Download:
+  POST /api/public-share/abc123?download=1
 
   Body:
-
   {
     "password": "your-password"
   }
@@ -291,7 +398,8 @@ export async function POST(
         {
           error: "PASSWORD_REQUIRED",
           passwordRequired: true,
-          message: "Please enter the password.",
+          message:
+            "Please enter the password.",
         },
         { status: 401 }
       );
@@ -340,7 +448,8 @@ export async function POST(
             {
               error: "INVALID_PASSWORD",
               passwordRequired: true,
-              message: "Incorrect password.",
+              message:
+                "Incorrect password.",
             },
             { status: 401 }
           );
@@ -378,6 +487,40 @@ export async function POST(
       }
     }
 
+    /*
+      Password is valid and ?download=1 was requested.
+    */
+    if (
+      request.nextUrl.searchParams.get(
+        "download"
+      ) === "1"
+    ) {
+      try {
+        return await downloadPublicFile(
+          result.signedUrl,
+          result.file.name,
+          result.file.mimeType
+        );
+      } catch (error) {
+        console.error(
+          "Protected public file download error:",
+          error
+        );
+
+        return NextResponse.json(
+          {
+            error: "DOWNLOAD_FAILED",
+            message:
+              "Could not download the file.",
+          },
+          { status: 500 }
+        );
+      }
+    }
+
+    /*
+      Normal password verification response.
+    */
     return NextResponse.json({
       success: true,
       link: result.link,
