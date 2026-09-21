@@ -2680,14 +2680,231 @@ async function deleteFolder(folder: Folder) {
   // ==========================================
 
   if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-100">
-        <p className="text-lg text-gray-600">
-          Loading Cloud Storage...
-        </p>
+  return (
+    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#020817] px-6">
+      <style jsx>{`
+        @keyframes cloudPulse {
+          0%,
+          100% {
+            transform: scale(1);
+            filter: drop-shadow(0 0 18px rgba(0, 217, 255, 0.55));
+          }
+
+          50% {
+            transform: scale(1.04);
+            filter: drop-shadow(0 0 34px rgba(0, 217, 255, 0.9));
+          }
+        }
+
+        @keyframes floatFile {
+          0%,
+          100% {
+            transform: translateY(0px) rotate(0deg);
+          }
+
+          50% {
+            transform: translateY(-14px) rotate(3deg);
+          }
+        }
+
+        @keyframes orbit {
+          from {
+            transform: rotate(0deg);
+          }
+
+          to {
+            transform: rotate(360deg);
+          }
+        }
+
+        @keyframes progress {
+          0% {
+            width: 15%;
+          }
+
+          50% {
+            width: 72%;
+          }
+
+          100% {
+            width: 92%;
+          }
+        }
+
+        @keyframes glow {
+          0%,
+          100% {
+            opacity: 0.35;
+          }
+
+          50% {
+            opacity: 0.8;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            transform: translateX(-10%);
+          }
+
+          50% {
+            transform: translateX(5%);
+          }
+
+          100% {
+            transform: translateX(-10%);
+          }
+        }
+
+        .cloud-pulse {
+          animation: cloudPulse 2.4s ease-in-out infinite;
+        }
+
+        .float-file {
+          animation: floatFile 2.8s ease-in-out infinite;
+        }
+
+        .orbit {
+          animation: orbit 8s linear infinite;
+        }
+
+        .loading-progress {
+          animation: progress 3s ease-in-out infinite;
+        }
+
+        .glow {
+          animation: glow 2s ease-in-out infinite;
+        }
+
+        .wave {
+          animation: wave 8s ease-in-out infinite;
+        }
+      `}</style>
+
+      {/* Background glow */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute left-[10%] top-[10%] h-72 w-72 rounded-full bg-cyan-500/10 blur-3xl" />
+        <div className="absolute right-[10%] top-[20%] h-80 w-80 rounded-full bg-blue-600/10 blur-3xl" />
+        <div className="absolute bottom-0 left-1/2 h-96 w-96 -translate-x-1/2 rounded-full bg-indigo-600/10 blur-3xl" />
       </div>
-    );
-  }
+
+      {/* Main loading content */}
+      <div className="relative z-10 flex w-full max-w-3xl flex-col items-center text-center">
+
+        {/* Cloud */}
+        <div className="relative mb-8 h-56 w-72 sm:h-64 sm:w-80">
+
+          {/* Orbit ring */}
+          <div className="orbit absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-400/20 sm:h-72 sm:w-72" />
+
+          {/* Glow */}
+          <div className="glow absolute left-1/2 top-1/2 h-48 w-48 -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-400/20 blur-3xl" />
+
+          {/* Floating files */}
+          <div className="float-file absolute left-2 top-8 flex h-14 w-14 items-center justify-center rounded-2xl border border-cyan-300/40 bg-cyan-400/10 text-2xl shadow-[0_0_25px_rgba(0,217,255,0.25)] backdrop-blur-xl">
+            🖼️
+          </div>
+
+          <div
+            className="float-file absolute right-2 top-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-purple-300/40 bg-purple-400/10 text-2xl shadow-[0_0_25px_rgba(139,92,246,0.25)] backdrop-blur-xl"
+            style={{ animationDelay: "0.5s" }}
+          >
+            📄
+          </div>
+
+          <div
+            className="float-file absolute bottom-2 left-12 flex h-14 w-14 items-center justify-center rounded-2xl border border-blue-300/40 bg-blue-400/10 text-2xl shadow-[0_0_25px_rgba(59,130,246,0.25)] backdrop-blur-xl"
+            style={{ animationDelay: "1s" }}
+          >
+            📁
+          </div>
+
+          <div
+            className="float-file absolute bottom-5 right-12 flex h-14 w-14 items-center justify-center rounded-2xl border border-cyan-300/40 bg-cyan-400/10 text-2xl shadow-[0_0_25px_rgba(0,217,255,0.25)] backdrop-blur-xl"
+            style={{ animationDelay: "1.5s" }}
+          >
+            📊
+          </div>
+
+          {/* Cloud */}
+          <div className="cloud-pulse absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+            <div className="relative flex h-36 w-52 items-center justify-center">
+
+              {/* Cloud shape */}
+              <div className="absolute bottom-2 h-20 w-44 rounded-full border border-cyan-200/70 bg-gradient-to-br from-cyan-400/30 via-blue-500/25 to-indigo-600/30 shadow-[0_0_45px_rgba(0,217,255,0.55)] backdrop-blur-xl" />
+
+              <div className="absolute left-10 top-9 h-20 w-20 rounded-full border border-cyan-200/60 bg-blue-500/25 shadow-[0_0_30px_rgba(0,217,255,0.45)]" />
+
+              <div className="absolute left-20 top-2 h-28 w-28 rounded-full border border-cyan-200/70 bg-cyan-400/20 shadow-[0_0_40px_rgba(0,217,255,0.5)]" />
+
+              <div className="absolute right-7 top-8 h-20 w-20 rounded-full border border-cyan-200/60 bg-blue-500/25 shadow-[0_0_30px_rgba(0,217,255,0.45)]" />
+
+              {/* Upload arrow */}
+              <div className="relative z-10 flex flex-col items-center">
+                <div className="text-5xl drop-shadow-[0_0_15px_rgba(255,255,255,0.9)]">
+                  ↑
+                </div>
+
+                <div className="mt-1 h-1.5 w-16 rounded-full bg-cyan-300 shadow-[0_0_15px_rgba(0,217,255,0.9)]" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Brand */}
+        <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl">
+          Cloud{" "}
+          <span className="text-cyan-400 drop-shadow-[0_0_15px_rgba(0,217,255,0.6)]">
+            Storage
+          </span>
+        </h1>
+
+        <p className="mt-3 text-sm tracking-[0.3em] text-slate-400 sm:text-base">
+          STORE • ACCESS • SHARE • ANYWHERE
+        </p>
+
+        {/* Progress */}
+        <div className="mt-10 w-full max-w-md">
+          <div className="h-3 overflow-hidden rounded-full border border-cyan-400/20 bg-slate-800/80 shadow-inner">
+            <div className="loading-progress h-full rounded-full bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500 shadow-[0_0_18px_rgba(0,217,255,0.8)]" />
+          </div>
+
+          <p className="mt-4 text-sm text-slate-400">
+            Loading your workspace...
+          </p>
+        </div>
+
+        {/* Bottom features */}
+        <div className="mt-12 flex flex-wrap justify-center gap-8 text-xs text-slate-400 sm:gap-16">
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-2xl">🛡️</span>
+            <span>Secure</span>
+          </div>
+
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-2xl">⚡</span>
+            <span>Fast</span>
+          </div>
+
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-2xl">☁️</span>
+            <span>Always with you</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom waves */}
+      <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-40 overflow-hidden opacity-40">
+        <div className="wave absolute -bottom-20 left-[-10%] h-40 w-[120%] rounded-[50%] border-t border-cyan-400/40 bg-blue-900/20" />
+
+        <div
+          className="wave absolute -bottom-24 left-[-5%] h-40 w-[110%] rounded-[50%] border-t border-blue-400/30 bg-indigo-900/20"
+          style={{ animationDelay: "1.5s" }}
+        />
+      </div>
+    </main>
+  );
+}
 
   
     // ==========================================
