@@ -2930,7 +2930,7 @@ async function deleteFolder(folder: Folder) {
             SIDEBAR
         ========================================== */}
         <aside
-  className={`fixed inset-y-0 left-0 z-50 w-64 shrink-0 flex-col border-r border-slate-200 bg-white ${
+  className={`fixed inset-y-0 left-0 z-50 w-64 shrink-0 flex-col border-r border-[#e4edf7] bg-white shadow-[4px_0_18px_rgba(30,100,180,0.04)] ${
     mobileMenuOpen ? "flex" : "hidden"
   } lg:static lg:flex`}
 >
@@ -2964,7 +2964,7 @@ async function deleteFolder(folder: Folder) {
           <div className="px-4 pt-5">
             <button
               onClick={() => setShowFolderInput(true)}
-              className="flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold shadow-sm hover:bg-slate-50"
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-[#dce9f5] bg-white text-slate-700 shadow-[0_4px_14px_rgba(30,100,180,0.06)] transition-all duration-200 hover:border-[#c9dff2] hover:bg-[#f8fbff] hover:text-sky-700"
             >
               <span className="text-lg">＋</span>
               New
