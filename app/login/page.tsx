@@ -23,13 +23,6 @@ export default function LoginPage() {
       ? 70
       : 100;
 
-  const passwordStrengthColor =
-    passwordStrength <= 35
-      ? "bg-red-500"
-      : passwordStrength <= 70
-      ? "bg-yellow-400"
-      : "bg-green-500";
-
   async function handleSubmit(
     e: FormEvent<HTMLFormElement>
   ) {
@@ -401,25 +394,38 @@ export default function LoginPage() {
                   </div>
 
                   {/* Password strength */}
-                  <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-slate-800">
-                    <div
-                      className={`h-full rounded-full transition-all duration-500 ease-out ${passwordStrengthColor}`}
-                      style={{
-                        width: `${passwordStrength}%`,
-                      }}
-                    />
-                  </div>
+                  {password.length > 0 && (
+                    <div className="mt-3">
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-800/80">
+                          <div
+                            className={`h-full rounded-full transition-all duration-500 ${
+                              passwordStrength <= 35
+                                ? "w-1/3 bg-red-500 shadow-[0_0_12px_rgba(239,68,68,0.7)]"
+                                : passwordStrength <= 70
+                                ? "w-2/3 bg-yellow-400 shadow-[0_0_12px_rgba(250,204,21,0.7)]"
+                                : "w-full bg-green-500 shadow-[0_0_12px_rgba(34,197,94,0.7)]"
+                            }`}
+                          />
+                        </div>
 
-                  {isSignup && (
-                    <p className="mt-2 text-right text-[11px] text-slate-500">
-                      {passwordStrength === 0
-                        ? "Enter a password"
-                        : passwordStrength <= 35
-                        ? "Weak password"
-                        : passwordStrength <= 70
-                        ? "Medium password"
-                        : "Strong password"}
-                    </p>
+                        <span
+                          className={`min-w-[64px] text-right text-xs font-semibold ${
+                            passwordStrength <= 35
+                              ? "text-red-400"
+                              : passwordStrength <= 70
+                              ? "text-yellow-300"
+                              : "text-green-400"
+                          }`}
+                        >
+                          {passwordStrength <= 35
+                            ? "Weak"
+                            : passwordStrength <= 70
+                            ? "Medium"
+                            : "Strong"}
+                        </span>
+                      </div>
+                    </div>
                   )}
                 </div>
 
