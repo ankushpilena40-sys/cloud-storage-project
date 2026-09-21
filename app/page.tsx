@@ -1190,14 +1190,20 @@ async function deleteFolder(folder: Folder) {
 
     // Check if a folder with the same name already exists
     // inside the current folder.
+    let folderQuery = supabase
+      .from("folders")
+      .select("id")
+      .eq("owner_id", user.id)
+      .ilike("name", name);
+
+    if (currentFolderId && currentFolderId !== "null") {
+      folderQuery = folderQuery.eq("parent_id", currentFolderId);
+    } else {
+      folderQuery = folderQuery.is("parent_id", null);
+    }
+
     const { data: existingFolder, error: checkError } =
-      await supabase
-        .from("folders")
-        .select("id")
-        .eq("owner_id", user.id)
-        .eq("parent_id", currentFolderId)
-        .ilike("name", name)
-        .maybeSingle();
+      await folderQuery.maybeSingle();
 
     if (checkError) {
       console.error("Folder check error:", checkError);
@@ -1223,11 +1229,14 @@ async function deleteFolder(folder: Folder) {
       .insert({
         name,
         owner_id: user.id,
-        parent_id: currentFolderId,
+        parent_id:
+          currentFolderId && currentFolderId !== "null"
+            ? currentFolderId
+            : null,
       });
 
     if (error) {
-      console.error("Create folder error:", error);
+      console.error("Create folder error:", JSON.stringify(error, null, 2));
 
       setMessage(
         "Create folder error: " +
@@ -1288,28 +1297,29 @@ async function deleteFolder(folder: Folder) {
         "_"
       );
 
-    const storagePath =
-      `${user.id}/${
-        currentFolderId ??
-        "root"
-      }/${fileId}-${safeName}`;
+    const folderId =
+  currentFolderId &&
+  currentFolderId !== "null"
+    ? currentFolderId
+    : null;
 
-    const {
+const storagePath =
+  `${user.id}/${folderId ?? "root"}/${fileId}-${safeName}`;
+  
+      const {
       error: uploadError,
-    } =
-      await supabase.storage
-        .from("drive")
-        .upload(
-          storagePath,
-          file,
-          {
-            contentType:
-              file.type ||
-              "application/octet-stream",
-            upsert:
-              false,
-          }
-        );
+    } = await supabase.storage
+      .from("drive")
+      .upload(
+        storagePath,
+        file,
+        {
+          contentType:
+            file.type ||
+            "application/octet-stream",
+          upsert: false,
+        }
+      );
 
     if (uploadError) {
       console.error(
@@ -1337,7 +1347,7 @@ async function deleteFolder(folder: Folder) {
           owner_id:
             user.id,
           folder_id:
-            currentFolderId,
+            folderId,
           name:
             file.name,
           storage_key:
@@ -1378,7 +1388,7 @@ async function deleteFolder(folder: Folder) {
     );
 
     await loadDrive(
-      currentFolderId
+      folderId
     );
 
     setUploading(false);
@@ -1649,19 +1659,16 @@ async function deleteFolder(folder: Folder) {
     if (!user) return;
 
     const target =
-      allFolders.find(
-        (folder) =>
-          folder.id ===
-          moveTargetId
+  moveTargetId === "__root__"
+    ? null
+    : allFolders.find(
+        (folder) => folder.id === moveTargetId
       );
 
-    if (!target) {
-      setMessage(
-        "Destination folder not found."
-      );
-
-      return;
-    }
+if (moveTargetId !== "__root__" && !target) {
+  setMessage("Destination folder not found.");
+  return;
+}
 
     setMoving(true);
 
@@ -1672,8 +1679,7 @@ async function deleteFolder(folder: Folder) {
       );
 
     const newPath =
-      `${user.id}/${moveTargetId}/${movingFile.id}-${safeName}`;
-
+  `${user.id}/${moveTargetId === "__root__" ? "root" : moveTargetId}/${movingFile.id}-${safeName}`;
     const {
       error: storageError,
     } =
@@ -1746,9 +1752,9 @@ async function deleteFolder(folder: Folder) {
     setMoveTargetId("");
     setMoving(false);
 
-    setMessage(
-      `"${movingFile.name}" moved to "${target.name}" successfully! ✅`
-    );
+   setMessage(
+  `"${movingFile.name}" moved to "${target?.name ?? "My Drive"}" successfully! ✅`
+);
   }
 
   // ==========================================
@@ -4232,7 +4238,11 @@ async function deleteFolder(folder: Folder) {
               <option value="">
                 Select destination folder
               </option>
-
+            {movingFile.folder_id !== null && (
+  <option value="__root__">
+    🏠 My Drive
+  </option>
+)}
               {allFolders
                 .filter(
                   (folder) =>
