@@ -2,6 +2,214 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createClient } from "../lib/supabase/client";
+const SECURITY_MAX_FILE_SIZE = 50 * 1024 * 1024;
+
+const SECURITY_BLOCKED_EXTENSIONS = [
+  "exe",
+  "bat",
+  "cmd",
+  "com",
+  "scr",
+  "msi",
+  "ps1",
+  "vbs",
+  "vbe",
+  "js",
+  "jse",
+  "wsf",
+  "wsh",
+  "hta",
+];
+
+function getSecurityExtension(fileName: string) {
+  const parts = fileName.toLowerCase().split(".");
+
+  return parts.length > 1
+    ? parts.pop() || ""
+    : "";
+}
+
+function getSecurityExpectedMime(
+  extension: string
+) {
+  const mimeMap: Record<string, string> = {
+    pdf: "application/pdf",
+    jpg: "image/jpeg",
+    jpeg: "image/jpeg",
+    png: "image/png",
+    gif: "image/gif",
+  };
+
+  return mimeMap[extension];
+}
+
+async function getSecurityFileBytes(
+  file: File,
+  length = 16
+) {
+  const buffer = await file
+    .slice(0, length)
+    .arrayBuffer();
+
+  return new Uint8Array(buffer);
+}
+
+function checkSecuritySignature(
+  extension: string,
+  bytes: Uint8Array
+) {
+  if (extension === "pdf") {
+    return (
+      bytes[0] === 0x25 &&
+      bytes[1] === 0x50 &&
+      bytes[2] === 0x44 &&
+      bytes[3] === 0x46 &&
+      bytes[4] === 0x2d
+    );
+  }
+
+  if (extension === "png") {
+    const signature = [
+      0x89,
+      0x50,
+      0x4e,
+      0x47,
+      0x0d,
+      0x0a,
+      0x1a,
+      0x0a,
+    ];
+
+    return signature.every(
+      (value, index) =>
+        bytes[index] === value
+    );
+  }
+
+  if (
+    extension === "jpg" ||
+    extension === "jpeg"
+  ) {
+    return (
+      bytes[0] === 0xff &&
+      bytes[1] === 0xd8 &&
+      bytes[2] === 0xff
+    );
+  }
+
+  if (extension === "gif") {
+    const header = String.fromCharCode(
+      bytes[0],
+      bytes[1],
+      bytes[2],
+      bytes[3],
+      bytes[4],
+      bytes[5]
+    );
+
+    return (
+      header === "GIF87a" ||
+      header === "GIF89a"
+    );
+  }
+
+  return true;
+}
+
+async function runUploadSecurityCheck(
+  file: File
+) {
+  // 1. SIZE
+  if (file.size > SECURITY_MAX_FILE_SIZE) {
+    return {
+      safe: false,
+      message:
+        "Security blocked: file size is above the 50 MB limit.",
+    };
+  }
+
+  // 2. EXTENSION
+  const extension =
+    getSecurityExtension(file.name);
+
+  if (
+    !extension ||
+    SECURITY_BLOCKED_EXTENSIONS.includes(
+      extension
+    )
+  ) {
+    return {
+      safe: false,
+      message:
+        `Security blocked: .${extension || "unknown"} files are not allowed.`,
+    };
+  }
+
+  // 3. FILENAME
+  const unsafeName =
+    /[<>:"/\\|?*\x00-\x1F]/.test(
+      file.name
+    );
+
+  if (unsafeName) {
+    return {
+      safe: false,
+      message:
+        "Security blocked: filename contains unsafe characters.",
+    };
+  }
+
+  // 4. MIME TYPE
+  const expectedMime =
+    getSecurityExpectedMime(extension);
+
+  if (
+    expectedMime &&
+    file.type !== expectedMime
+  ) {
+    return {
+      safe: false,
+      message:
+        `Security blocked: file type does not match .${extension}.`,
+    };
+  }
+
+  // 5. FILE SIGNATURE
+  const signatureExtensions = [
+    "pdf",
+    "png",
+    "jpg",
+    "jpeg",
+    "gif",
+  ];
+
+  if (
+    signatureExtensions.includes(extension)
+  ) {
+    const bytes =
+      await getSecurityFileBytes(file);
+
+    const signatureValid =
+      checkSecuritySignature(
+        extension,
+        bytes
+      );
+
+    if (!signatureValid) {
+      return {
+        safe: false,
+        message:
+          "Security blocked: file content does not match its extension.",
+      };
+    }
+  }
+
+  return {
+    safe: true,
+    message:
+      "Security check passed. File is ready for upload.",
+  };
+}
 
 type Folder = {
   id: string;
@@ -1263,50 +1471,78 @@ async function deleteFolder(folder: Folder) {
   // UPLOAD
   // ==========================================
 
-  function openFilePicker() {
-    fileInputRef.current?.click();
+ // ==========================================
+// UPLOAD
+// ==========================================
+
+function openFilePicker() {
+  fileInputRef.current?.click();
+}
+
+async function uploadFile(file: File) {
+  if (viewMode !== "drive") {
+    return;
   }
 
-  async function uploadFile(
-    file: File
-  ) {
-    if (
-      viewMode !==
-      "drive"
-    ) {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    setMessage("Please login first.");
+    return;
+  }
+
+  setUploading(true);
+
+  try {
+    // ==========================================
+    // SECURITY CHECK
+    // ==========================================
+
+    setMessage(
+      `🛡️ Checking "${file.name}" for security...`
+    );
+
+    const securityResult =
+      await runUploadSecurityCheck(file);
+
+    if (!securityResult.safe) {
+      setMessage(
+        `🚫 ${securityResult.message}`
+      );
+
+      setUploading(false);
       return;
     }
 
-    const user =
-      await getCurrentUser();
-
-    if (!user) return;
-
-    setUploading(true);
+    // ==========================================
+    // SECURITY PASSED
+    // ==========================================
 
     setMessage(
-      `Uploading "${file.name}"...`
+      `✅ Security check passed. Uploading "${file.name}"...`
     );
 
-    const fileId =
-      crypto.randomUUID();
+    const fileId = crypto.randomUUID();
 
-    const safeName =
-      file.name.replace(
-        /[^\w.\-() ]/g,
-        "_"
-      );
+    const safeName = file.name.replace(
+      /[^\w.\-() ]/g,
+      "_"
+    );
 
     const folderId =
-  currentFolderId &&
-  currentFolderId !== "null"
-    ? currentFolderId
-    : null;
+      currentFolderId &&
+      currentFolderId !== "null"
+        ? currentFolderId
+        : null;
 
-const storagePath =
-  `${user.id}/${folderId ?? "root"}/${fileId}-${safeName}`;
-  
-      const {
+    const storagePath =
+      `${user.id}/${folderId ?? "root"}/${fileId}-${safeName}`;
+
+    // ==========================================
+    // STORAGE UPLOAD
+    // ==========================================
+
+    const {
       error: uploadError,
     } = await supabase.storage
       .from("drive")
@@ -1333,33 +1569,29 @@ const storagePath =
       );
 
       setUploading(false);
-
       return;
     }
 
+    // ==========================================
+    // DATABASE RECORD
+    // ==========================================
+
     const {
       error: dbError,
-    } =
-      await supabase
-        .from("files")
-        .insert({
-          id: fileId,
-          owner_id:
-            user.id,
-          folder_id:
-            folderId,
-          name:
-            file.name,
-          storage_key:
-            storagePath,
-          mime_type:
-            file.type ||
-            "application/octet-stream",
-          size_bytes:
-            file.size,
-          is_deleted:
-            false,
-        });
+    } = await supabase
+      .from("files")
+      .insert({
+        id: fileId,
+        owner_id: user.id,
+        folder_id: folderId,
+        name: file.name,
+        storage_key: storagePath,
+        mime_type:
+          file.type ||
+          "application/octet-stream",
+        size_bytes: file.size,
+        is_deleted: false,
+      });
 
     if (dbError) {
       console.error(
@@ -1379,34 +1611,53 @@ const storagePath =
       );
 
       setUploading(false);
-
       return;
     }
 
+    // ==========================================
+    // SUCCESS
+    // ==========================================
+
     setMessage(
-      `"${file.name}" uploaded successfully! ✅`
+      `🛡️ Security passed • "${file.name}" uploaded successfully! ✅`
     );
 
-    await loadDrive(
-      folderId
+    await loadDrive(folderId);
+
+    setUploading(false);
+  } catch (error) {
+    console.error(
+      "Secure upload error:",
+      error
+    );
+
+    setMessage(
+      "Security/upload error: " +
+        (
+          error instanceof Error
+            ? error.message
+            : "Unknown error"
+        )
     );
 
     setUploading(false);
   }
+}
 
-  async function handleFileSelected(
-    event: React.ChangeEvent<HTMLInputElement>
-  ) {
-    const file =
-      event.target.files?.[0];
+async function handleFileSelected(
+  event: React.ChangeEvent<HTMLInputElement>
+) {
+  const file =
+    event.target.files?.[0];
 
-    if (!file) return;
-
-    await uploadFile(file);
-
-    event.target.value = "";
+  if (!file) {
+    return;
   }
 
+  await uploadFile(file);
+
+  event.target.value = "";
+}
   // ==========================================
   // DOWNLOAD
   // ==========================================
@@ -3086,6 +3337,17 @@ if (moveTargetId !== "__root__" && !target) {
               <span className="text-lg">🗑️</span>
               Trash
             </button>
+       <button
+  type="button"
+  onClick={() => {
+    window.location.href = "/security";
+    setMobileMenuOpen(false);
+  }}
+  className="mt-1 flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
+>
+  <span className="text-lg">🛡️</span>
+  <span>Security</span>
+</button>
 
           </nav>
 

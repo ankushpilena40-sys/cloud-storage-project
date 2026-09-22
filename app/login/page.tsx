@@ -18,10 +18,10 @@ export default function LoginPage() {
     password.length === 0
       ? 0
       : password.length < 8
-      ? 35
-      : password.length < 12
-      ? 70
-      : 100;
+        ? 35
+        : password.length < 12
+          ? 70
+          : 100;
 
   async function handleSubmit(
     e: FormEvent<HTMLFormElement>
@@ -69,6 +69,7 @@ export default function LoginPage() {
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#020817] text-white">
+
       <style jsx>{`
         @keyframes float {
           0%,
@@ -163,6 +164,7 @@ export default function LoginPage() {
 
       {/* Background */}
       <div className="pointer-events-none absolute inset-0">
+
         <div className="absolute left-[-10%] top-[-10%] h-96 w-96 rounded-full bg-cyan-500/15 blur-3xl" />
 
         <div className="absolute right-[-8%] top-[15%] h-[28rem] w-[28rem] rounded-full bg-blue-600/15 blur-3xl" />
@@ -170,6 +172,7 @@ export default function LoginPage() {
         <div className="absolute bottom-[-15%] left-[35%] h-[30rem] w-[30rem] rounded-full bg-indigo-600/15 blur-3xl" />
 
         {/* Stars */}
+
         <div className="star absolute left-[12%] top-[18%] h-1.5 w-1.5 rounded-full bg-cyan-300 shadow-[0_0_12px_rgba(103,232,249,0.9)]" />
 
         <div
@@ -194,13 +197,17 @@ export default function LoginPage() {
       </div>
 
       {/* Top branding */}
+
       <header className="relative z-20 flex items-center justify-between px-6 py-5 sm:px-10">
+
         <div className="flex items-center gap-3">
+
           <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-cyan-300/30 bg-white/10 text-2xl shadow-[0_0_25px_rgba(0,217,255,0.25)] backdrop-blur-xl">
             ☁️
           </div>
 
           <div>
+
             <div className="text-lg font-bold tracking-tight">
               Cloud{" "}
               <span className="text-cyan-400">
@@ -211,7 +218,9 @@ export default function LoginPage() {
             <div className="hidden text-[10px] tracking-[0.25em] text-slate-500 sm:block">
               SECURE • FAST • EVERYWHERE
             </div>
+
           </div>
+
         </div>
 
         <div className="hidden items-center gap-5 text-xs tracking-wider text-slate-400 sm:flex">
@@ -221,14 +230,19 @@ export default function LoginPage() {
           <span className="text-cyan-400">•</span>
           <span>Reliable</span>
         </div>
+
       </header>
 
       {/* Main */}
+
       <div className="relative z-10 mx-auto flex min-h-[calc(100vh-88px)] w-full max-w-7xl items-center justify-center px-5 pb-10">
+
         <div className="grid w-full items-center gap-10 lg:grid-cols-[1fr_430px_1fr]">
 
           {/* Left information */}
+
           <section className="hidden lg:block">
+
             <p className="mb-3 text-sm font-medium tracking-[0.25em] text-cyan-400">
               YOUR FILES
             </p>
@@ -248,7 +262,9 @@ export default function LoginPage() {
             </p>
 
             <div className="mt-8 space-y-5">
+
               <div className="flex items-center gap-4">
+
                 <div className="flex h-11 w-11 items-center justify-center rounded-full border border-cyan-400/30 bg-cyan-400/10 text-xl shadow-[0_0_20px_rgba(0,217,255,0.15)]">
                   🛡️
                 </div>
@@ -257,13 +273,16 @@ export default function LoginPage() {
                   <p className="font-semibold">
                     Secure
                   </p>
+
                   <p className="text-sm text-slate-500">
                     Your data is protected
                   </p>
                 </div>
+
               </div>
 
               <div className="flex items-center gap-4">
+
                 <div className="flex h-11 w-11 items-center justify-center rounded-full border border-blue-400/30 bg-blue-400/10 text-xl shadow-[0_0_20px_rgba(59,130,246,0.15)]">
                   ⚡
                 </div>
@@ -272,13 +291,16 @@ export default function LoginPage() {
                   <p className="font-semibold">
                     Fast
                   </p>
+
                   <p className="text-sm text-slate-500">
                     Lightning quick access
                   </p>
                 </div>
+
               </div>
 
               <div className="flex items-center gap-4">
+
                 <div className="flex h-11 w-11 items-center justify-center rounded-full border border-indigo-400/30 bg-indigo-400/10 text-xl shadow-[0_0_20px_rgba(99,91,255,0.15)]">
                   ☁️
                 </div>
@@ -287,25 +309,32 @@ export default function LoginPage() {
                   <p className="font-semibold">
                     Anywhere
                   </p>
+
                   <p className="text-sm text-slate-500">
                     On all your devices
                   </p>
                 </div>
+
               </div>
+
             </div>
+
           </section>
 
           {/* Login card */}
+
           <section className="relative">
-            {/* Card glow */}
+
             <div className="pulse-glow absolute -inset-8 rounded-[3rem] bg-cyan-400/10 blur-3xl" />
 
             <div className="relative overflow-hidden rounded-[2rem] border border-white/15 bg-white/[0.07] p-7 shadow-[0_0_70px_rgba(0,140,255,0.18)] backdrop-blur-2xl sm:p-9">
 
               {/* Top shine */}
+
               <div className="absolute left-0 right-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-300 to-transparent opacity-80" />
 
               <div className="text-center">
+
                 <div className="float mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-cyan-300/30 bg-gradient-to-br from-cyan-400/20 to-blue-600/20 text-4xl shadow-[0_0_35px_rgba(0,217,255,0.25)]">
                   ☁️
                 </div>
@@ -322,14 +351,19 @@ export default function LoginPage() {
                     ? "Create your account"
                     : "Sign in to your account"}
                 </p>
+
               </div>
 
               <form
                 onSubmit={handleSubmit}
                 className="mt-8 space-y-4"
               >
+
+                {/* Name */}
+
                 {isSignup && (
                   <div>
+
                     <label className="mb-2 block text-sm font-medium text-slate-200">
                       Name
                     </label>
@@ -344,15 +378,20 @@ export default function LoginPage() {
                       required
                       className="w-full rounded-xl border border-white/15 bg-white/[0.06] px-4 py-3.5 text-white placeholder:text-slate-500 outline-none transition duration-300 focus:border-cyan-400/60 focus:bg-white/[0.09] focus:ring-4 focus:ring-cyan-400/10"
                     />
+
                   </div>
                 )}
 
+                {/* Email */}
+
                 <div>
+
                   <label className="mb-2 block text-sm font-medium text-slate-200">
                     Email
                   </label>
 
                   <div className="relative">
+
                     <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-lg text-cyan-400">
                       ✉
                     </span>
@@ -367,15 +406,21 @@ export default function LoginPage() {
                       required
                       className="w-full rounded-xl border border-white/15 bg-white/[0.06] py-3.5 pl-12 pr-4 text-white placeholder:text-slate-500 outline-none transition duration-300 focus:border-cyan-400/60 focus:bg-white/[0.09] focus:ring-4 focus:ring-cyan-400/10"
                     />
+
                   </div>
+
                 </div>
 
+                {/* Password */}
+
                 <div>
+
                   <label className="mb-2 block text-sm font-medium text-slate-200">
                     Password
                   </label>
 
                   <div className="relative">
+
                     <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-lg text-cyan-400">
                       🔒
                     </span>
@@ -391,22 +436,47 @@ export default function LoginPage() {
                       required
                       className="w-full rounded-xl border border-white/15 bg-white/[0.06] py-3.5 pl-12 pr-4 text-white placeholder:text-slate-500 outline-none transition duration-300 focus:border-cyan-400/60 focus:bg-white/[0.09] focus:ring-4 focus:ring-cyan-400/10"
                     />
+
                   </div>
 
+                  {/* FORGOT PASSWORD */}
+
+                  {!isSignup && (
+                    <div className="mt-2 flex justify-end">
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          window.location.href =
+                            "/forgot-password";
+                        }}
+                        className="text-sm font-medium text-cyan-400 transition hover:text-cyan-300"
+                      >
+                        Forgot password?
+                      </button>
+
+                    </div>
+                  )}
+
                   {/* Password strength */}
+
                   {password.length > 0 && (
                     <div className="mt-3">
+
                       <div className="flex items-center justify-between gap-3">
+
                         <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-800/80">
+
                           <div
                             className={`h-full rounded-full transition-all duration-500 ${
                               passwordStrength <= 35
                                 ? "w-1/3 bg-red-500 shadow-[0_0_12px_rgba(239,68,68,0.7)]"
                                 : passwordStrength <= 70
-                                ? "w-2/3 bg-yellow-400 shadow-[0_0_12px_rgba(250,204,21,0.7)]"
-                                : "w-full bg-green-500 shadow-[0_0_12px_rgba(34,197,94,0.7)]"
+                                  ? "w-2/3 bg-yellow-400 shadow-[0_0_12px_rgba(250,204,21,0.7)]"
+                                  : "w-full bg-green-500 shadow-[0_0_12px_rgba(34,197,94,0.7)]"
                             }`}
                           />
+
                         </div>
 
                         <span
@@ -414,20 +484,25 @@ export default function LoginPage() {
                             passwordStrength <= 35
                               ? "text-red-400"
                               : passwordStrength <= 70
-                              ? "text-yellow-300"
-                              : "text-green-400"
+                                ? "text-yellow-300"
+                                : "text-green-400"
                           }`}
                         >
                           {passwordStrength <= 35
                             ? "Weak"
                             : passwordStrength <= 70
-                            ? "Medium"
-                            : "Strong"}
+                              ? "Medium"
+                              : "Strong"}
                         </span>
+
                       </div>
+
                     </div>
                   )}
+
                 </div>
+
+                {/* Message */}
 
                 {message && (
                   <div className="rounded-xl border border-white/10 bg-white/[0.06] p-3 text-sm text-slate-300">
@@ -435,24 +510,32 @@ export default function LoginPage() {
                   </div>
                 )}
 
+                {/* Submit */}
+
                 <button
                   type="submit"
                   disabled={loading}
                   className="group relative mt-2 w-full overflow-hidden rounded-xl border border-cyan-300/40 bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 px-4 py-3.5 font-semibold text-white shadow-[0_0_30px_rgba(0,217,255,0.25)] transition duration-300 hover:scale-[1.01] hover:shadow-[0_0_40px_rgba(0,217,255,0.4)] disabled:cursor-not-allowed disabled:opacity-50"
                 >
+
                   <span className="shimmer absolute inset-y-0 left-0 w-1/3 -translate-x-full bg-white/20 blur-md" />
 
                   <span className="relative">
                     {loading
                       ? "Please wait..."
                       : isSignup
-                      ? "Create Account →"
-                      : "Sign In →"}
+                        ? "Create Account →"
+                        : "Sign In →"}
                   </span>
+
                 </button>
+
               </form>
 
+              {/* Signup / Login */}
+
               <div className="mt-7 text-center text-sm">
+
                 <span className="text-slate-500">
                   {isSignup
                     ? "Already have an account?"
@@ -471,26 +554,37 @@ export default function LoginPage() {
                     ? "Sign In"
                     : "Sign Up"}
                 </button>
+
               </div>
+
+              {/* Security */}
 
               <div className="mt-7 flex items-center justify-center gap-2 text-[11px] text-slate-600">
                 <span>🔐</span>
+
                 <span>
                   Your files stay private and secure
                 </span>
               </div>
+
             </div>
+
           </section>
 
           {/* Right visual */}
+
           <section className="relative hidden h-[500px] lg:block">
+
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+
               <div className="orbit absolute left-1/2 top-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-400/20" />
 
               <div className="pulse-glow absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-400/10 blur-3xl" />
 
               {/* Cloud */}
+
               <div className="float-slow relative flex h-48 w-64 items-center justify-center">
+
                 <div className="absolute bottom-5 h-24 w-56 rounded-full border border-cyan-200/60 bg-gradient-to-br from-cyan-400/25 via-blue-500/20 to-indigo-600/25 shadow-[0_0_55px_rgba(0,217,255,0.4)] backdrop-blur-xl" />
 
                 <div className="absolute left-10 top-14 h-24 w-24 rounded-full border border-cyan-200/50 bg-blue-500/20" />
@@ -502,9 +596,11 @@ export default function LoginPage() {
                 <div className="relative z-10 text-7xl drop-shadow-[0_0_20px_rgba(0,217,255,0.8)]">
                   ↑
                 </div>
+
               </div>
 
               {/* Floating files */}
+
               <div className="float-slow absolute -left-16 top-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-cyan-300/30 bg-white/[0.06] text-2xl shadow-[0_0_25px_rgba(0,217,255,0.2)] backdrop-blur-xl">
                 🖼️
               </div>
@@ -529,9 +625,11 @@ export default function LoginPage() {
               >
                 📊
               </div>
+
             </div>
 
             <div className="absolute bottom-2 left-1/2 w-full -translate-x-1/2 text-center">
+
               <p className="text-sm text-slate-400">
                 More than storage,
               </p>
@@ -539,13 +637,19 @@ export default function LoginPage() {
               <p className="mt-1 text-lg font-semibold text-cyan-400">
                 your digital workspace.
               </p>
+
             </div>
+
           </section>
+
         </div>
+
       </div>
 
       {/* Bottom glow */}
+
       <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-blue-950/40 to-transparent" />
+
     </main>
   );
 }
